@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Page with Analytics</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .header {
+            background: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .button {
+            background: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #005a87;
+        }
+    </style>
+
+  <script>
+!function(){"use strict";var e=document.createElement("script");e.async=!0,e.src="https://uxmetrics.com/s?domain=ux-metrics.github.io",e.onload=function(){console.log("UXMetrics: Widget loaded successfully")},e.onerror=function(){console.warn("UXMetrics: Failed to load. Verify domain at https://uxmetrics.com/measure")},document.head.appendChild(e)}();
+</script>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Sample Website</h1>
+        <p>This page demonstrates proper analytics implementation</p>
+    </div>
+
+    <div class="content">
+        <h2>Welcome to Our Site</h2>
+        <p>This is a sample page that shows how to properly implement tracking scripts like Google Tag Manager.</p>
+        
+        <h3>Key Features:</h3>
+        <ul>
+            <li>Proper GTM implementation</li>
+            <li>Clean, semantic HTML</li>
+            <li>Responsive design</li>
+            <li>Event tracking capabilities</li>
+        </ul>
+
+        <button class="button" onclick="trackEvent('button_click', 'cta_button')">Call to Action</button>
+        <button class="button" onclick="trackEvent('button_click', 'secondary_button')">Learn More</button>
+    </div>
+
+</body>
+</html>
