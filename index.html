@@ -1,68 +1,249 @@
+@ -0,0 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Page with Analytics</title>
-
+    <title>UXMetrics Test Site</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
             line-height: 1.6;
+            color: #333;
         }
         .header {
-            background: #f4f4f4;
-            padding: 20px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
         }
         .content {
-            background: white;
+            margin-bottom: 40px;
+        }
+        .section {
+            background: #f9f9f9;
             padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
         .button {
-            background: #007cba;
+            background: #7c3aed;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 16px;
             margin: 10px 5px;
         }
         .button:hover {
-            background: #005a87;
+            background: #6d28d9;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #d1fae5; border-left: 4px solid #10b981; }
+        .info { background: #dbeafe; border-left: 4px solid #3b82f6; }
+        .warning { background: #fef3cd; border-left: 4px solid #f59e0b; }
+        
+        .console-log {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
         }
     </style>
-
-<script>
-!function(){"use strict";var e=document.createElement("script");e.async=!0,e.src="https://dev.uxmetrics.com/s",e.onload=function(){console.log("UXMetrics: Widget loaded successfully")},e.onerror=function(){console.warn("UXMetrics: Failed to load. Verify domain at https://uxmetrics.com/measure")},document.head.appendChild(e)}();
-</script>
 </head>
 <body>
-
     <div class="header">
-        <h1>Sample Website</h1>
-        <p>This page demonstrates proper analytics implementation</p>
+        <h1>🎯 UXMetrics Test Site</h1>
+        <p>Testing the UXMetrics widget integration on dev.uxmetrics.com</p>
+        <div id="script-status" class="status info">
+            <strong>Status:</strong> <span id="status-text">Initializing...</span>
+        </div>
     </div>
 
     <div class="content">
-        <h2>Welcome to Our Site</h2>
-        <p>This is a sample page that shows how to properly implement tracking scripts like Google Tag Manager.</p>
-        
-        <h3>Key Features:</h3>
-        <ul>
-            <li>Proper GTM implementation</li>
-            <li>Clean, semantic HTML</li>
-            <li>Responsive design</li>
-            <li>Event tracking capabilities</li>
-        </ul>
+        <div class="section">
+            <h2>About This Page</h2>
+            <p>This test page simulates a real website with the UXMetrics snippet installed. It's designed to help verify that the widget loads and functions correctly.</p>
+            <p><strong>Current URL:</strong> <code id="current-url"></code></p>
+            <p><strong>Referrer:</strong> <code id="referrer"></code></p>
+        </div>
 
-        <button class="button" onclick="trackEvent('button_click', 'cta_button')">Call to Action</button>
-        <button class="button" onclick="trackEvent('button_click', 'secondary_button')">Learn More</button>
+        <div class="section">
+            <h2>Interaction Test</h2>
+            <p>Use these buttons to generate user interactions that might trigger surveys:</p>
+            <button class="button" onclick="logInteraction('button_click', 'Test Button 1')">Test Button 1</button>
+            <button class="button" onclick="logInteraction('button_click', 'Test Button 2')">Test Button 2</button>
+            <button class="button" onclick="simulatePageView()">Simulate Page View</button>
+            <button class="button" onclick="clearLogs()">Clear Console</button>
+        </div>
+
+        <div class="section">
+            <h2>Sample Content</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+            <p>This content helps simulate a real website where users would naturally interact and provide feedback through the UXMetrics widget.</p>
+        </div>
+
+        <div class="section">
+            <h2>Console Output</h2>
+            <div id="console-output" class="console-log">
+                <div>🔍 Monitoring UXMetrics script loading...</div>
+            </div>
+        </div>
     </div>
 
+    <!-- UXMetrics Widget -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // Load UXMetrics widget - Industry standard approach
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'http://dev.uxmetrics.com/s';  // Points to your Rails server
+        script.onload = function() {
+            logToConsole('✅ UXMetrics: Widget loaded successfully', 'success');
+            updateStatus('Widget loaded successfully', 'success');
+        };
+        script.onerror = function() {
+            logToConsole('❌ UXMetrics: Failed to load. Check domain verification at http://dev.uxmetrics.com/measure', 'error');
+            updateStatus('Failed to load widget', 'error');
+        };
+        
+        document.head.appendChild(script);
+        logToConsole('🚀 UXMetrics: Script injection started...');
+    })();
+    </script>
+
+    <!-- Test Site JavaScript -->
+    <script>
+        // Initialize page info
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-url').textContent = window.location.href;
+            document.getElementById('referrer').textContent = document.referrer || 'No referrer';
+            
+            // Monitor for any UXMetrics related activity
+            logToConsole('📄 Page loaded: ' + window.location.href);
+        });
+
+        function logToConsole(message, type = 'info') {
+            const output = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            
+            let prefix = '';
+            switch(type) {
+                case 'success': prefix = '✅'; break;
+                case 'error': prefix = '❌'; break;
+                case 'warning': prefix = '⚠️'; break;
+                default: prefix = 'ℹ️'; break;
+            }
+            
+            div.innerHTML = `<span style="color: #6b7280;">[${timestamp}]</span> ${prefix} ${message}`;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function updateStatus(text, type = 'info') {
+            const statusEl = document.getElementById('script-status');
+            const textEl = document.getElementById('status-text');
+            
+            textEl.textContent = text;
+            statusEl.className = 'status ' + type;
+        }
+
+        function logInteraction(type, label) {
+            logToConsole(`🖱️ User interaction: ${type} - ${label}`);
+            
+            // Dispatch custom event that UXMetrics might listen for
+            window.dispatchEvent(new CustomEvent('uxmetrics:interaction', {
+                detail: { type, label, timestamp: Date.now() }
+            }));
+        }
+
+        function simulatePageView() {
+            logToConsole('📄 Simulated page view event');
+            
+            // Simulate a page navigation that might trigger surveys
+            window.dispatchEvent(new CustomEvent('uxmetrics:pageview', {
+                detail: { 
+                    url: window.location.href,
+                    title: document.title,
+                    timestamp: Date.now()
+                }
+            }));
+        }
+
+        function clearLogs() {
+            document.getElementById('console-output').innerHTML = '<div>🔍 Console cleared - Monitoring UXMetrics script loading...</div>';
+        }
+
+        // Override console.log to capture UXMetrics logs
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            
+            // Check if this is a UXMetrics related log
+            const message = args.join(' ');
+            if (message.toLowerCase().includes('uxmetrics') || message.toLowerCase().includes('widget')) {
+                logToConsole(`📋 Console: ${message}`);
+            }
+        };
+
+        // Override console.warn and console.error too
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            const message = args.join(' ');
+            if (message.toLowerCase().includes('uxmetrics') || message.toLowerCase().includes('widget')) {
+                logToConsole(`⚠️ Warning: ${message}`, 'warning');
+            }
+        };
+
+        const originalError = console.error;
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            const message = args.join(' ');
+            if (message.toLowerCase().includes('uxmetrics') || message.toLowerCase().includes('widget')) {
+                logToConsole(`❌ Error: ${message}`, 'error');
+            }
+        };
+
+        // Monitor for any widgets being added to the page
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) { // Element node
+                        // Check if this looks like a UXMetrics widget
+                        if (node.classList && (
+                            node.classList.contains('uxmetrics') ||
+                            node.classList.contains('pulse') ||
+                            node.classList.contains('widget') ||
+                            node.id && node.id.includes('uxmetrics')
+                        )) {
+                            logToConsole(`🎯 Widget detected: ${node.tagName} with class "${node.className}"`, 'success');
+                        }
+                    }
+                });
+            });
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    </script>
 </body>
 </html>
