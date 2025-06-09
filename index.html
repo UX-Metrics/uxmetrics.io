@@ -1,4 +1,3 @@
-@ -0,0 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -104,28 +103,6 @@
         </div>
     </div>
 
-    <!-- UXMetrics Widget -->
-    <script>
-    (function() {
-        'use strict';
-        
-        // Load UXMetrics widget - Industry standard approach
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = 'http://dev.uxmetrics.com/s';  // Points to your Rails server
-        script.onload = function() {
-            logToConsole('✅ UXMetrics: Widget loaded successfully', 'success');
-            updateStatus('Widget loaded successfully', 'success');
-        };
-        script.onerror = function() {
-            logToConsole('❌ UXMetrics: Failed to load. Check domain verification at http://dev.uxmetrics.com/measure', 'error');
-            updateStatus('Failed to load widget', 'error');
-        };
-        
-        document.head.appendChild(script);
-        logToConsole('🚀 UXMetrics: Script injection started...');
-    })();
-    </script>
 
     <!-- Test Site JavaScript -->
     <script>
@@ -244,6 +221,30 @@
             childList: true,
             subtree: true
         });
+    </script>
+
+    
+    <!-- UXMetrics Widget -->
+    <script>
+    (function() {
+        'use strict';
+        
+        // Load UXMetrics widget - Industry standard approach
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'http://dev.uxmetrics.com/s';  // Points to your Rails server
+        script.onload = function() {
+            logToConsole('✅ UXMetrics: Widget loaded successfully', 'success');
+            updateStatus('Widget loaded successfully', 'success');
+        };
+        script.onerror = function() {
+            logToConsole('❌ UXMetrics: Failed to load. Check domain verification at http://dev.uxmetrics.com/measure', 'error');
+            updateStatus('Failed to load widget', 'error');
+        };
+        
+        document.head.appendChild(script);
+        logToConsole('🚀 UXMetrics: Script injection started...');
+    })();
     </script>
 </body>
 </html>
