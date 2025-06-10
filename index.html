@@ -41,6 +41,18 @@
         .button:hover {
             background: #6d28d9;
         }
+        .button.secondary {
+            background: #64748b;
+        }
+        .button.secondary:hover {
+            background: #475569;
+        }
+        .button.danger {
+            background: #dc2626;
+        }
+        .button.danger:hover {
+            background: #b91c1c;
+        }
         .status {
             padding: 10px;
             border-radius: 4px;
@@ -61,6 +73,28 @@
             max-height: 200px;
             overflow-y: auto;
         }
+
+        .control-section {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .storage-info {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+            border: 1px solid #d1d5db;
+        }
     </style>
 </head>
 <body>
@@ -80,13 +114,30 @@
             <p><strong>Referrer:</strong> <code id="referrer"></code></p>
         </div>
 
+        <div class="section control-section">
+            <h2>🛠️ Widget Controls</h2>
+            <p>Use these controls to manage the widget state and testing modes:</p>
+            
+            <div class="button-row">
+                <button class="button danger" onclick="clearLocalStorage()">🗑️ Clear localStorage</button>
+                <button class="button secondary" onclick="loadFullScreenMode()">🖥️ Load Full Screen Mode</button>
+                <button class="button" onclick="reloadWidget()">🔄 Reload Widget</button>
+            </div>
+
+            <div class="storage-info" id="storage-info">
+                Loading storage information...
+            </div>
+        </div>
+
         <div class="section">
             <h2>Interaction Test</h2>
             <p>Use these buttons to generate user interactions that might trigger surveys:</p>
-            <button class="button" onclick="logInteraction('button_click', 'Test Button 1')">Test Button 1</button>
-            <button class="button" onclick="logInteraction('button_click', 'Test Button 2')">Test Button 2</button>
-            <button class="button" onclick="simulatePageView()">Simulate Page View</button>
-            <button class="button" onclick="clearLogs()">Clear Console</button>
+            <div class="button-row">
+                <button class="button" onclick="logInteraction('button_click', 'Test Button 1')">Test Button 1</button>
+                <button class="button" onclick="logInteraction('button_click', 'Test Button 2')">Test Button 2</button>
+                <button class="button" onclick="simulatePageView()">Simulate Page View</button>
+                <button class="button secondary" onclick="clearLogs()">Clear Console</button>
+            </div>
         </div>
 
         <div class="section">
@@ -103,9 +154,11 @@
         </div>
     </div>
 
-
     <!-- Test Site JavaScript -->
     <script>
+        // Global flag to track widget mode
+        let isFullScreenMode = false;
+
         // Initialize page info
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('current-url').textContent = window.location.href;
@@ -113,6 +166,7 @@
             
             // Monitor for any UXMetrics related activity
             logToConsole('📄 Page loaded: ' + window.location.href);
+            updateStorageInfo();
         });
 
         function logToConsole(message, type = 'info') {
@@ -139,6 +193,152 @@
             
             textEl.textContent = text;
             statusEl.className = 'status ' + type;
+        }
+
+        function updateStorageInfo() {
+            const storageInfo = document.getElementById('storage-info');
+            
+            // Get all localStorage items with 'uxmetrics' in the key
+            const uxmetricsItems = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.toLowerCase().includes('uxmetrics')) {
+                    const value = localStorage.getItem(key);
+                    uxmetricsItems.push(`${key}: ${value}`);
+                }
+            }
+
+            // Get all sessionStorage items with 'uxmetrics' in the key
+            const sessionItems = [];
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                if (key && key.toLowerCase().includes('uxmetrics')) {
+                    const value = sessionStorage.getItem(key);
+                    sessionItems.push(`${key}: ${value}`);
+                }
+            }
+
+            let info = '<strong>📦 Storage Information:</strong><br>';
+            info += '<strong>localStorage UXMetrics items:</strong><br>';
+            if (uxmetricsItems.length > 0) {
+                info += uxmetricsItems.join('<br>') + '<br>';
+            } else {
+                info += 'No UXMetrics items found<br>';
+            }
+            
+            info += '<br><strong>sessionStorage UXMetrics items:</strong><br>';
+            if (sessionItems.length > 0) {
+                info += sessionItems.join('<br>');
+            } else {
+                info += 'No UXMetrics items found';
+            }
+
+            storageInfo.innerHTML = info;
+        }
+
+        function clearLocalStorage() {
+            if (confirm('This will clear ALL localStorage data for this domain. Continue?')) {
+                // Get all keys before clearing
+                const allKeys = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    allKeys.push(localStorage.key(i));
+                }
+                
+                // Clear localStorage
+                localStorage.clear();
+                
+                // Also clear sessionStorage UXMetrics items
+                const sessionKeys = [];
+                for (let i = 0; i < sessionStorage.length; i++) {
+                    const key = sessionStorage.key(i);
+                    if (key && key.toLowerCase().includes('uxmetrics')) {
+                        sessionKeys.push(key);
+                    }
+                }
+                sessionKeys.forEach(key => sessionStorage.removeItem(key));
+                
+                logToConsole(`🗑️ Cleared localStorage (${allKeys.length} items) and UXMetrics sessionStorage items`, 'success');
+                updateStorageInfo();
+                
+                // Remove any existing widgets from DOM
+                const existingWidgets = document.querySelectorAll('div[style*="position: fixed"]');
+                existingWidgets.forEach(widget => {
+                    if (widget.style.bottom || widget.style.right || widget.innerHTML.includes('Submit')) {
+                        widget.remove();
+                        logToConsole('🗑️ Removed existing widget from DOM', 'success');
+                    }
+                });
+                
+                updateStatus('localStorage cleared - ready for fresh widget load', 'success');
+            }
+        }
+
+        function loadFullScreenMode() {
+            logToConsole('🖥️ Loading widget in full screen mode...', 'info');
+            isFullScreenMode = true;
+            
+            // Remove any existing widgets
+            const existingWidgets = document.querySelectorAll('div[style*="position: fixed"]');
+            existingWidgets.forEach(widget => {
+                if (widget.style.bottom || widget.style.right || widget.innerHTML.includes('Submit')) {
+                    widget.remove();
+                }
+            });
+            
+            // Set the global FULL_SCREEN_MODE variable that the widget script will read
+            window.UXMETRICS_FULL_SCREEN_MODE = true;
+            
+            // Reload the widget script with full screen mode
+            loadWidgetScript(true);
+        }
+
+        function reloadWidget() {
+            logToConsole('🔄 Reloading widget...', 'info');
+            
+            // Remove existing widgets
+            const existingWidgets = document.querySelectorAll('div[style*="position: fixed"]');
+            existingWidgets.forEach(widget => {
+                if (widget.style.bottom || widget.style.right || widget.innerHTML.includes('Submit')) {
+                    widget.remove();
+                    logToConsole('🗑️ Removed existing widget from DOM', 'success');
+                }
+            });
+            
+            // Remove existing script tag
+            const existingScript = document.querySelector('script[src*="dev.uxmetrics.com/s"]');
+            if (existingScript) {
+                existingScript.remove();
+            }
+            
+            // Reset full screen mode flag unless explicitly set
+            window.UXMETRICS_FULL_SCREEN_MODE = isFullScreenMode;
+            
+            // Reload the widget
+            setTimeout(() => {
+                loadWidgetScript(isFullScreenMode);
+            }, 500);
+        }
+
+        function loadWidgetScript(fullScreen = false) {
+            // Create a fresh script element
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://dev.uxmetrics.com/s';
+            
+            script.onload = function() {
+                const mode = fullScreen ? 'full screen' : 'widget';
+                logToConsole(`✅ UXMetrics: Widget loaded successfully in ${mode} mode`, 'success');
+                updateStatus(`Widget loaded successfully (${mode} mode)`, 'success');
+                updateStorageInfo();
+            };
+            
+            script.onerror = function() {
+                logToConsole('❌ UXMetrics: Failed to load. Check domain verification at http://dev.uxmetrics.com/measure', 'error');
+                updateStatus('Failed to load widget', 'error');
+            };
+            
+            document.head.appendChild(script);
+            logToConsole(`🚀 UXMetrics: Script injection started (${fullScreen ? 'full screen' : 'widget'} mode)...`);
         }
 
         function logInteraction(type, label) {
@@ -212,6 +412,15 @@
                         )) {
                             logToConsole(`🎯 Widget detected: ${node.tagName} with class "${node.className}"`, 'success');
                         }
+                        
+                        // Also check for fixed position elements that might be widgets
+                        if (node.style && node.style.position === 'fixed' && 
+                            (node.style.bottom || node.style.right) &&
+                            node.innerHTML && node.innerHTML.includes('Submit')) {
+                            const mode = node.style.width === '100%' ? 'full screen' : 'widget';
+                            logToConsole(`🎯 UXMetrics widget injected (${mode} mode)`, 'success');
+                            updateStorageInfo();
+                        }
                     }
                 });
             });
@@ -221,21 +430,27 @@
             childList: true,
             subtree: true
         });
+
+        // Update storage info periodically
+        setInterval(updateStorageInfo, 5000);
     </script>
 
-    
     <!-- UXMetrics Widget -->
     <script>
     (function() {
         'use strict';
         
+        // Check if full screen mode was requested
+        const fullScreenMode = window.UXMETRICS_FULL_SCREEN_MODE || false;
+        
         // Load UXMetrics widget - Industry standard approach
         const script = document.createElement('script');
         script.async = true;
-        script.src = 'https://dev.uxmetrics.com/s';  // Points to your Rails server
+        script.src = 'https://dev.uxmetrics.com/s';
         script.onload = function() {
-            logToConsole('✅ UXMetrics: Widget loaded successfully', 'success');
-            updateStatus('Widget loaded successfully', 'success');
+            const mode = fullScreenMode ? 'full screen' : 'widget';
+            logToConsole(`✅ UXMetrics: Widget loaded successfully in ${mode} mode`, 'success');
+            updateStatus(`Widget loaded successfully (${mode} mode)`, 'success');
         };
         script.onerror = function() {
             logToConsole('❌ UXMetrics: Failed to load. Check domain verification at http://dev.uxmetrics.com/measure', 'error');
