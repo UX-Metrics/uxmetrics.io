@@ -461,5 +461,15 @@
         logToConsole('🚀 UXMetrics: Script injection started...');
     })();
     </script>
+
+    <script>
+(function() {
+  const script = document.createElement('script')
+  script.async = true
+  script.src = 'http://localhost:3000/w/854d487c-3696-48a7-9ad8-03c102f1e8d9.js'
+  
+  document.head.appendChild(script)
+})()
+</script>
 </body>
 </html>
