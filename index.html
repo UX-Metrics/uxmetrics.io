@@ -446,7 +446,7 @@
         // Load UXMetrics widget - Industry standard approach
         const script = document.createElement('script');
         script.async = true;
-        script.src = 'https://dev.uxmetrics.com/s';
+        script.src = 'https://dev.uxmetrics.com/w/54fb5f3f-2db0-4cae-b984-05216c5502a8.js';
         script.onload = function() {
             const mode = fullScreenMode ? 'full screen' : 'widget';
             logToConsole(`✅ UXMetrics: Widget loaded successfully in ${mode} mode`, 'success');
@@ -462,14 +462,5 @@
     })();
     </script>
 
-    <script>
-(function() {
-  const script = document.createElement('script')
-  script.async = true
-  script.src = 'http://localhost:3000/w/854d487c-3696-48a7-9ad8-03c102f1e8d9.js'
-  
-  document.head.appendChild(script)
-})()
-</script>
 </body>
 </html>
